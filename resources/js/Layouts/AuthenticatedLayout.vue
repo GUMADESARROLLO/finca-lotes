@@ -1,7 +1,16 @@
 <script setup>
+import { ref, provide } from 'vue'
 import Sidebar from '@/Components/Sidebar.vue'
 import TopBar from '@/Components/TopBar.vue'
 import { Link } from '@inertiajs/vue3'
+
+const sidebarOpen = ref(true)
+provide('sidebarOpen', sidebarOpen)
+
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value
+}
+provide('toggleSidebar', toggleSidebar)
 
 const currentRoute = () => route().current()
 
@@ -18,10 +27,10 @@ const mobileNav = [
   <div class="min-h-screen bg-[#fbf9f1]">
     <Sidebar />
 
-    <main class="md:ml-64 min-h-screen pb-20 md:pb-0">
-      <TopBar />
+    <main :class="['min-h-screen pb-20 md:pb-0 transition-all duration-300', sidebarOpen ? 'md:ml-64' : 'md:ml-0']">
+      <TopBar @toggle-sidebar="toggleSidebar" />
 
-      <div class="px-4 md:px-12">
+      <div :class="['px-4 pt-4 md:pt-6 transition-all duration-300', sidebarOpen ? 'md:px-12' : 'md:px-8']">
         <slot />
       </div>
     </main>

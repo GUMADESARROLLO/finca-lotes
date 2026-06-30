@@ -82,7 +82,7 @@ onMounted(() => {
 <template>
   <AuthenticatedLayout>
     <Head title="Lotes" />
-    <div class="flex-grow flex flex-col md:flex-row overflow-hidden gap-6" style="height: calc(100vh - 8rem);">
+    <div class="flex-grow flex flex-col md:flex-row overflow-hidden gap-6" style="height: calc(100vh - 7rem);">
       <div class="flex-grow md:w-3/5 bg-[#f6f4ec] rounded-xl shadow-sm border border-[#bfc9c1] overflow-hidden relative min-h-[300px]">
         <div ref="mapContainer" id="map" class="h-full w-full rounded-lg z-[1]"></div>
         <div class="absolute bottom-4 left-4 z-[1000] bg-[#fbf9f1]/90 backdrop-blur-md p-2 rounded-lg shadow-sm border border-[#bfc9c1]">
