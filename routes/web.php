@@ -1,58 +1,42 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\Lote\LoteController;
+use App\Http\Controllers\Ciclo\CicloController;
+use App\Http\Controllers\Costo\CostoController;
+use App\Http\Controllers\Cosecha\CosechaController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('dashboard')
-        : redirect()->route('login');
-});
+Route::get('/', fn () => auth()->check()
+    ? redirect()->route('dashboard')
+    : redirect()->route('login')
+);
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', fn () => Inertia\Inertia::render('Dashboard'))
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/lotes', function () {
-        $perPage = (int) request()->query('per_page', 10);
-        $perPage = min(max($perPage, 5), 50);
+    Route::get('/lotes', [LoteController::class, 'index'])->name('lotes.index');
+    Route::get('/lotes/crear', [LoteController::class, 'create'])->name('lotes.create');
+    Route::post('/lotes', [LoteController::class, 'store'])->name('lotes.store');
+    Route::get('/lotes/{lote}/editar', [LoteController::class, 'edit'])->name('lotes.edit');
+    Route::put('/lotes/{lote}', [LoteController::class, 'update'])->name('lotes.update');
 
-        $page = \App\Models\Lote::with(['ciclos.cultivo', 'usuariosAsignados'])
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage)
-            ->through(fn ($l) => [
-                'id' => $l->id,
-                'codigo' => $l->codigo,
-                'nombre' => $l->nombre,
-                'area_manzanas' => $l->area_manzanas,
-                'tipo_suelo' => $l->tipo_suelo,
-                'lat' => (float) $l->lat,
-                'lng' => (float) $l->lng,
-                'activo' => $l->activo,
-                'descripcion' => $l->descripcion,
-                'ciclo_actual' => $l->ciclos->sortByDesc('fecha_siembra')->first(),
-            ]);
-
-        return Inertia::render('Lotes/Index', [
-            'lotes' => $page->items(),
-            'pagination' => [
-                'current_page' => $page->currentPage(),
-                'last_page' => $page->lastPage(),
-                'per_page' => $page->perPage(),
-                'total' => $page->total(),
-            ],
-        ]);
-    })->name('lotes.index');
-    Route::get('/ciclos', fn () => Inertia::render('Ciclos/Index'))->name('ciclos.index');
-    Route::get('/costos', fn () => Inertia::render('Costos/Index'))->name('costos.index');
-    Route::get('/cosechas', fn () => Inertia::render('Cosechas/Index'))->name('cosechas.index');
+    Route::get('/ciclos', [CicloController::class, 'index'])->name('ciclos.index');
+    Route::get('/ciclos/crear', [CicloController::class, 'create'])->name('ciclos.create');
+    Route::post('/ciclos', [CicloController::class, 'store'])->name('ciclos.store');
+    Route::get('/ciclos/{ciclo}', [CicloController::class, 'show'])->name('ciclos.show');
+    Route::post('/ciclos/{ciclo}/insumos', [CicloController::class, 'addInsumo'])->name('ciclos.insumos.store');
+    Route::post('/ciclos/{ciclo}/mano-obra', [CicloController::class, 'addManoObra'])->name('ciclos.mano-obra.store');
+    Route::post('/ciclos/{ciclo}/otros-costos', [CicloController::class, 'addOtroCosto'])->name('ciclos.otros-costos.store');
+    Route::get('/insumos/lista', [\App\Http\Controllers\Insumo\InsumoController::class, 'lista'])->name('insumos.lista');
+    Route::get('/costos', [CostoController::class, 'index'])->name('costos.index');
+    Route::get('/cosechas', [CosechaController::class, 'index'])->name('cosechas.index');
 });
 
 require __DIR__.'/auth.php';

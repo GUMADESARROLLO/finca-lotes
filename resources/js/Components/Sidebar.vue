@@ -50,22 +50,9 @@ const navItems = [
       </Link>
     </nav>
 
-    <div class="px-4 mb-4">
-      <button class="w-full py-2 bg-[#0f5238] text-white rounded-lg text-sm flex items-center justify-center gap-1 hover:shadow-md transition-all active:scale-95">
-        <span class="material-symbols-outlined text-[20px]">add</span>
-        Nuevo Registro
-      </button>
-    </div>
-
-    <div class="border-t border-[#bfc9c1]/30 pt-4 px-2">
-      <Link class="flex items-center gap-4 px-4 py-2 text-sm text-[#404943] hover:text-[#1b1c17] hover:bg-[#eae8e0] rounded-lg transition-all" :href="route('profile.edit')">
-        <span class="material-symbols-outlined shrink-0">settings</span>
-        <span>Ajustes</span>
-      </Link>
-      <Link class="flex items-center gap-4 px-4 py-2 text-sm text-[#404943] hover:text-[#1b1c17] hover:bg-[#eae8e0] rounded-lg transition-all" :href="route('logout')" method="post" as="button">
-        <span class="material-symbols-outlined text-[#ba1a1a] shrink-0">logout</span>
-        <span class="text-[#ba1a1a]">Cerrar Sesión</span>
-      </Link>
+    <div class="text-center text-xs text-[#707973] border-t border-[#bfc9c1]/30 pt-3 pb-1 px-4 mt-auto">
+      <p>Finca <span class="font-medium">v2.4.0</span></p>
+      <p class="text-[10px]">Sistema de Gestión Agrícola</p>
     </div>
   </aside>
 </template>

@@ -1,16 +1,13 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, Link, router } from '@inertiajs/vue3'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, onUnmounted } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-const props = defineProps({
-  lotes: Array,
-  pagination: Object,
-})
-
+const props = defineProps({ lotes: Array, pagination: Object })
 const mapContainer = ref(null)
+let map = null
 
 const borderColor = (ciclo) => {
   if (!ciclo) return 'border-[#bfc9c1]'
@@ -28,55 +25,57 @@ const badgeInfo = (ciclo) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '—'
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('es-NI', { day: 'numeric', month: 'short', year: 'numeric' })
+  return new Date(dateStr).toLocaleDateString('es-NI', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-const goToPage = (page) => {
-  router.get(route('lotes.index', { page }), { preserveState: true })
-}
+const goToPage = (page) => router.get(route('lotes.index', { page }), { preserveState: true })
 
-const allCoords = computed(() => props.lotes.filter(l => l.lat && l.lng))
+const polygonColor = (ciclo) => {
+  if (!ciclo) return '#bfc9c1'
+  if (ciclo.estado === 'activo') return '#0f5238'
+  if (ciclo.estado === 'cosechado') return '#fda055'
+  return '#bfc9c1'
+}
 
 const initMap = () => {
-  const coords = allCoords.value
-  if (!mapContainer.value || coords.length === 0) return
-
-  const map = L.map(mapContainer.value)
+  if (!mapContainer.value || props.lotes.length === 0) return
+  map = L.map(mapContainer.value)
   const bounds = L.latLngBounds()
 
-  coords.forEach(lote => {
-    bounds.extend([lote.lat, lote.lng])
-    const color = !lote.ciclo_actual ? '#bfc9c1'
-      : lote.ciclo_actual.estado === 'activo' ? '#0f5238'
-      : lote.ciclo_actual.estado === 'cosechado' ? '#fda055' : '#bfc9c1'
+  props.lotes.forEach(lote => {
+    const poly = lote.poligono
+    const coords = poly ? (typeof poly === 'string' ? JSON.parse(poly) : poly) : null
 
-    L.circleMarker([lote.lat, lote.lng], {
-      radius: 14,
-      fillColor: color,
-      fillOpacity: 0.8,
-      color: '#ffffff',
-      weight: 2,
-    }).addTo(map)
-      .bindPopup(`<b>${lote.nombre}</b><br>${lote.ciclo_actual?.cultivo?.nombre || '—'}<br>${badgeInfo(lote.ciclo_actual).label}`)
+    if (coords && coords.length >= 3) {
+      const pts = coords.map(c => [c[0], c[1]])
+      pts.forEach(p => bounds.extend(p))
+      const color = polygonColor(lote.ciclo_actual)
+      L.polygon(pts, {
+        color, fillColor: color, fillOpacity: 0.12, weight: 2,
+      }).addTo(map)
+        .bindPopup(`<b>${lote.nombre}</b><br>${lote.ciclo_actual?.cultivo?.nombre || '—'}<br>${badgeInfo(lote.ciclo_actual).label}`)
+    } else if (lote.lat && lote.lng) {
+      bounds.extend([lote.lat, lote.lng])
+      const color = polygonColor(lote.ciclo_actual)
+      L.circleMarker([lote.lat, lote.lng], {
+        radius: 10, fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 2,
+      }).addTo(map)
+        .bindPopup(`<b>${lote.nombre}</b><br>${lote.ciclo_actual?.cultivo?.nombre || '—'}`)
+    }
   })
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap'
-  }).addTo(map)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map)
 
-  if (coords.length === 1) {
-    map.setView([coords[0].lat, coords[0].lng], 15)
-  } else {
+  if (bounds.isValid()) {
     map.fitBounds(bounds.pad(0.15))
+  } else {
+    map.setView([11.9848, -86.3088], 13)
   }
-
   requestAnimationFrame(() => map.invalidateSize())
 }
 
-onMounted(() => {
-  setTimeout(initMap, 250)
-})
+onMounted(() => setTimeout(initMap, 250))
+onUnmounted(() => { if (map) map.remove() })
 </script>
 
 <template>
@@ -97,14 +96,10 @@ onMounted(() => {
 
       <div class="md:w-2/5 flex flex-col gap-3 h-full overflow-hidden">
         <div class="flex items-center justify-between flex-shrink-0">
-          <h3 class="text-xl text-[#0f5238]">
-            Lotes
-            <span class="text-sm text-[#404943] font-normal">({{ pagination.total }})</span>
-          </h3>
-          <button class="bg-[#0f5238] text-white px-4 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:shadow-md transition-all active:scale-95">
-            <span class="material-symbols-outlined text-[18px]">add_circle</span>
-            Nuevo
-          </button>
+          <h3 class="text-xl text-[#0f5238]">Lotes <span class="text-sm text-[#404943] font-normal">({{ pagination.total }})</span></h3>
+          <Link :href="route('lotes.create')" class="bg-[#0f5238] text-white px-4 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:shadow-md transition-all active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">add_circle</span> Nuevo
+          </Link>
         </div>
 
         <div class="flex-grow overflow-y-auto space-y-3 pb-4" style="scrollbar-width: thin; scrollbar-color: #bfc9c1 transparent;">
@@ -117,46 +112,32 @@ onMounted(() => {
                 <h4 class="text-base font-semibold text-[#1b1c17] truncate group-hover:text-[#0f5238] transition-colors">{{ lote.nombre }}</h4>
                 <p class="text-xs text-[#404943] truncate">{{ lote.codigo }} · {{ lote.tipo_suelo || 'Suelo sin especificar' }}</p>
               </div>
-              <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-medium flex items-center gap-1"
-                :class="badgeInfo(lote.ciclo_actual).cls"
-              >
+              <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-medium flex items-center gap-1" :class="badgeInfo(lote.ciclo_actual).cls">
                 <span class="material-symbols-outlined text-[14px] font-variation-settings: 'FILL' 1">{{ badgeInfo(lote.ciclo_actual).icon }}</span>
                 {{ badgeInfo(lote.ciclo_actual).label }}
               </span>
             </div>
 
             <div v-if="lote.ciclo_actual" class="grid grid-cols-2 gap-2 py-1.5 border-y border-[#eae8e0] text-xs">
-              <div>
-                <span class="text-[#404943]">Cultivo</span>
-                <p class="text-[#1b1c17] font-medium truncate">{{ lote.ciclo_actual.cultivo?.nombre || '—' }}</p>
-              </div>
-              <div>
-                <span class="text-[#404943]">Siembra</span>
-                <p class="text-[#1b1c17] font-medium">{{ formatDate(lote.ciclo_actual.fecha_siembra) }}</p>
-              </div>
+              <div><span class="text-[#404943]">Cultivo</span><p class="text-[#1b1c17] font-medium truncate">{{ lote.ciclo_actual.cultivo?.nombre || '—' }}</p></div>
+              <div><span class="text-[#404943]">Siembra</span><p class="text-[#1b1c17] font-medium">{{ formatDate(lote.ciclo_actual.fecha_siembra) }}</p></div>
             </div>
 
             <div class="mt-1.5 flex justify-between items-center">
               <span class="text-xs text-[#404943]">{{ lote.area_manzanas }} Mz</span>
-              <span class="text-[#0f5238] text-xs flex items-center gap-0.5 hover:underline font-medium">
-                Ver Detalles <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-              </span>
+              <Link :href="route('lotes.edit', lote.id)" class="text-[#0f5238] text-xs flex items-center gap-0.5 hover:underline font-medium">
+                Editar <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+              </Link>
             </div>
           </div>
         </div>
 
         <div v-if="pagination.last_page > 1" class="flex items-center justify-between pt-2 border-t border-[#eae8e0] flex-shrink-0">
-          <button
-            :disabled="pagination.current_page <= 1"
-            class="text-xs px-3 py-1 rounded border border-[#bfc9c1] disabled:opacity-30 hover:bg-[#eae8e0] transition-colors"
-            @click="goToPage(pagination.current_page - 1)"
-          >Anterior</button>
+          <button :disabled="pagination.current_page <= 1" @click="goToPage(pagination.current_page - 1)"
+            class="text-xs px-3 py-1 rounded border border-[#bfc9c1] disabled:opacity-30 hover:bg-[#eae8e0] transition-colors">Anterior</button>
           <span class="text-xs text-[#404943]">{{ pagination.current_page }} / {{ pagination.last_page }}</span>
-          <button
-            :disabled="pagination.current_page >= pagination.last_page"
-            class="text-xs px-3 py-1 rounded border border-[#bfc9c1] disabled:opacity-30 hover:bg-[#eae8e0] transition-colors"
-            @click="goToPage(pagination.current_page + 1)"
-          >Siguiente</button>
+          <button :disabled="pagination.current_page >= pagination.last_page" @click="goToPage(pagination.current_page + 1)"
+            class="text-xs px-3 py-1 rounded border border-[#bfc9c1] disabled:opacity-30 hover:bg-[#eae8e0] transition-colors">Siguiente</button>
         </div>
       </div>
     </div>

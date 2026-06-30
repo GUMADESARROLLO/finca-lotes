@@ -18,10 +18,18 @@ class Lote extends Model
         'tipo_suelo',
         'lat',
         'lng',
+        'poligono',
         'descripcion',
         'activo',
         'created_by',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'poligono' => 'array',
+        ];
+    }
 
     public function creador(): BelongsTo
     {

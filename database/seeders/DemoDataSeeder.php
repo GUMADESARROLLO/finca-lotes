@@ -52,7 +52,7 @@ class DemoDataSeeder extends Seeder
         ];
 
         $suelos = ['Franco arenoso', 'Arcilloso', 'Limoso', 'Franco', 'Arenoso'];
-        $cultivosSeeder = [1, 2, 3, 4, 5];
+        $cultivosSeeder = [1, 2, 3];
         $estados = ['activo', 'cosechado', 'planificado'];
 
         $hoy = Carbon::today();
