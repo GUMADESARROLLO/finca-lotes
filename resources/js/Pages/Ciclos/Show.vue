@@ -27,9 +27,9 @@ const formatCurrency = (n) => n ? 'C$' + Number(n).toLocaleString('es-NI', { min
 
 const badgeEstado = computed(() => {
   const e = props.ciclo.estado
-  if (e === 'activo') return { label: 'Activo', cls: 'bg-[#2d6a4f] text-[#a8e7c5]' }
-  if (e === 'cosechado') return { label: 'Cosechado', cls: 'bg-[#e4e3db] text-[#404943]' }
-  return { label: 'Planificado', cls: 'bg-[#e4e3db] text-[#404943]' }
+  if (e === 'activo') return { label: 'Activo', cls: 'bg-primary-container text-on-primary-container' }
+  if (e === 'cosechado') return { label: 'Cosechado', cls: 'bg-surface-container-highest text-on-surface-variant' }
+  return { label: 'Planificado', cls: 'bg-surface-container-highest text-on-surface-variant' }
 })
 
 // --- Insumo form ---
@@ -136,21 +136,21 @@ onUnmounted(() => { fpInstanceInsumo?.destroy(); fpInstanceMo?.destroy(); fpInst
 
     <div class="w-full space-y-6">
       <div class="flex items-center gap-4">
-        <Link :href="route('ciclos.index')" class="material-symbols-outlined text-[#404943] hover:text-[#0f5238] transition-colors p-1">arrow_back</Link>
+        <Link :href="route('ciclos.index')" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors p-1">arrow_back</Link>
         <div class="flex-1">
           <div class="flex items-center gap-3">
-            <h2 class="text-2xl text-[#0f5238] font-bold">{{ ciclo.lote?.codigo }} — {{ ciclo.lote?.nombre }}</h2>
+            <h2 class="text-2xl text-primary font-bold">{{ ciclo.lote?.codigo }} — {{ ciclo.lote?.nombre }}</h2>
             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold" :class="badgeEstado.cls">{{ badgeEstado.label }}</span>
           </div>
-          <p class="text-sm text-[#404943]">{{ ciclo.cultivo?.nombre }} · Inicio: {{ formatDate(ciclo.fecha_siembra) }} · Cosecha est.: {{ formatDate(ciclo.fecha_cosecha_estimada) }}</p>
+          <p class="text-sm text-on-surface-variant">{{ ciclo.cultivo?.nombre }} · Inicio: {{ formatDate(ciclo.fecha_siembra) }} · Cosecha est.: {{ formatDate(ciclo.fecha_cosecha_estimada) }}</p>
         </div>
       </div>
 
-      <div class="border-b border-[#bfc9c1]">
+      <div class="border-b border-outline-variant">
         <nav class="flex gap-6">
           <button v-for="t in tabs" :key="t.key" @click="tab = t.key"
             class="pb-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5"
-            :class="tab === t.key ? 'border-[#0f5238] text-[#0f5238]' : 'border-transparent text-[#404943] hover:text-[#1b1c17]'"
+            :class="tab === t.key ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'"
           >
             <span class="material-symbols-outlined text-[18px]">{{ t.icon }}</span>
             {{ t.label }}
@@ -160,28 +160,28 @@ onUnmounted(() => { fpInstanceInsumo?.destroy(); fpInstanceMo?.destroy(); fpInst
 
       <!-- TAB: General -->
       <div v-if="tab === 'general'" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="md:col-span-2 bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 p-6 space-y-4">
-          <h3 class="text-lg font-semibold text-[#1b1c17]">Detalles del Ciclo</h3>
+        <div class="md:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-6 space-y-4">
+          <h3 class="text-lg font-semibold text-on-surface">Detalles del Ciclo</h3>
           <div class="grid grid-cols-2 gap-4">
-            <div><span class="text-xs text-[#404943]">Lote</span><p class="text-sm font-medium text-[#1b1c17]">{{ ciclo.lote?.nombre }} ({{ ciclo.lote?.codigo }})</p></div>
-            <div><span class="text-xs text-[#404943]">Cultivo</span><p class="text-sm font-medium text-[#1b1c17]">{{ ciclo.cultivo?.nombre }}</p></div>
-            <div><span class="text-xs text-[#404943]">Siembra</span><p class="text-sm font-medium text-[#1b1c17]">{{ formatDate(ciclo.fecha_siembra) }}</p></div>
-            <div><span class="text-xs text-[#404943]">Cosecha estimada</span><p class="text-sm font-medium text-[#1b1c17]">{{ formatDate(ciclo.fecha_cosecha_estimada) }}</p></div>
-            <div><span class="text-xs text-[#404943]">Cosecha real</span><p class="text-sm font-medium text-[#1b1c17]">{{ ciclo.fecha_cosecha_real ? formatDate(ciclo.fecha_cosecha_real) : '—' }}</p></div>
-            <div><span class="text-xs text-[#404943]">Estado</span><p class="text-sm font-medium text-[#1b1c17]">{{ ciclo.estado }}</p></div>
+            <div><span class="text-xs text-on-surface-variant">Lote</span><p class="text-sm font-medium text-on-surface">{{ ciclo.lote?.nombre }} ({{ ciclo.lote?.codigo }})</p></div>
+            <div><span class="text-xs text-on-surface-variant">Cultivo</span><p class="text-sm font-medium text-on-surface">{{ ciclo.cultivo?.nombre }}</p></div>
+            <div><span class="text-xs text-on-surface-variant">Siembra</span><p class="text-sm font-medium text-on-surface">{{ formatDate(ciclo.fecha_siembra) }}</p></div>
+            <div><span class="text-xs text-on-surface-variant">Cosecha estimada</span><p class="text-sm font-medium text-on-surface">{{ formatDate(ciclo.fecha_cosecha_estimada) }}</p></div>
+            <div><span class="text-xs text-on-surface-variant">Cosecha real</span><p class="text-sm font-medium text-on-surface">{{ ciclo.fecha_cosecha_real ? formatDate(ciclo.fecha_cosecha_real) : '—' }}</p></div>
+            <div><span class="text-xs text-on-surface-variant">Estado</span><p class="text-sm font-medium text-on-surface">{{ ciclo.estado }}</p></div>
           </div>
           <div v-if="ciclo.notas">
-            <span class="text-xs text-[#404943]">Notas</span>
-            <p class="text-sm text-[#1b1c17] mt-1">{{ ciclo.notas }}</p>
+            <span class="text-xs text-on-surface-variant">Notas</span>
+            <p class="text-sm text-on-surface mt-1">{{ ciclo.notas }}</p>
           </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 p-6 space-y-4">
-          <h3 class="text-lg font-semibold text-[#1b1c17]">Costos Acumulados</h3>
-          <p class="text-3xl font-bold text-[#0f5238]">{{ formatCurrency(ciclo.total_costos) }}</p>
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-6 space-y-4">
+          <h3 class="text-lg font-semibold text-on-surface">Costos Acumulados</h3>
+          <p class="text-3xl font-bold text-primary">{{ formatCurrency(ciclo.total_costos) }}</p>
           <div class="space-y-2 text-sm">
-            <div class="flex justify-between"><span class="text-[#404943]">Insumos</span><span>{{ formatCurrency(ciclo.insumos.reduce((a, i) => a + i.costo_total, 0)) }}</span></div>
-            <div class="flex justify-between"><span class="text-[#404943]">Mano de obra</span><span>{{ formatCurrency(ciclo.mano_obra.reduce((a, m) => a + m.costo_total, 0)) }}</span></div>
-            <div class="flex justify-between"><span class="text-[#404943]">Otros costos</span><span>{{ formatCurrency(ciclo.otros_costos.reduce((a, o) => a + o.monto, 0)) }}</span></div>
+            <div class="flex justify-between"><span class="text-on-surface-variant">Insumos</span><span>{{ formatCurrency(ciclo.insumos.reduce((a, i) => a + i.costo_total, 0)) }}</span></div>
+            <div class="flex justify-between"><span class="text-on-surface-variant">Mano de obra</span><span>{{ formatCurrency(ciclo.mano_obra.reduce((a, m) => a + m.costo_total, 0)) }}</span></div>
+            <div class="flex justify-between"><span class="text-on-surface-variant">Otros costos</span><span>{{ formatCurrency(ciclo.otros_costos.reduce((a, o) => a + o.monto, 0)) }}</span></div>
           </div>
         </div>
       </div>
@@ -189,19 +189,19 @@ onUnmounted(() => { fpInstanceInsumo?.destroy(); fpInstanceMo?.destroy(); fpInst
       <!-- TAB: Insumos -->
       <div v-if="tab === 'insumos'" class="space-y-4">
         <div class="flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-[#1b1c17]">{{ ciclo.insumos.length }} insumos registrados</h3>
-          <button @click="showInsumoForm = !showInsumoForm" class="bg-[#0f5238] text-white px-4 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:brightness-110 transition-all">
+          <h3 class="text-lg font-semibold text-on-surface">{{ ciclo.insumos.length }} insumos registrados</h3>
+          <button @click="showInsumoForm = !showInsumoForm" class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:brightness-110 transition-all">
             <span class="material-symbols-outlined text-[18px]">add</span> Agregar Insumo
           </button>
         </div>
 
-        <div v-show="showInsumoForm" class="bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 p-5 space-y-4">
+        <div v-show="showInsumoForm" class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-5 space-y-4">
           <div class="flex items-center gap-3">
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="radio" :value="false" v-model="crearInsumoNuevo" class="text-[#0f5238]" /> Existente
+              <input type="radio" :value="false" v-model="crearInsumoNuevo" class="text-primary" /> Existente
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="radio" :value="true" v-model="crearInsumoNuevo" class="text-[#0f5238]" /> Nuevo
+              <input type="radio" :value="true" v-model="crearInsumoNuevo" class="text-primary" /> Nuevo
             </label>
           </div>
 
@@ -209,45 +209,45 @@ onUnmounted(() => { fpInstanceInsumo?.destroy(); fpInstanceMo?.destroy(); fpInst
             :model-value="insumoForm.insumo_id" @update:model-value="insumoForm.insumo_id = $event" />
 
           <div v-if="crearInsumoNuevo" class="grid grid-cols-3 gap-3">
-            <input v-model="insumoForm.insumo_nombre" type="text" placeholder="Nombre del insumo" class="h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" />
-            <select v-model="insumoForm.insumo_tipo" class="h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm bg-white outline-none focus:border-[#0f5238]">
+            <input v-model="insumoForm.insumo_nombre" type="text" placeholder="Nombre del insumo" class="h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" />
+            <select v-model="insumoForm.insumo_tipo" class="h-10 px-3 border border-outline-variant rounded-lg text-sm bg-surface-container-lowest outline-none focus:border-primary">
               <option value="fertilizante">Fertilizante</option><option value="semilla">Semilla</option>
               <option value="pesticida">Pesticida</option><option value="herbicida">Herbicida</option><option value="otro">Otro</option>
             </select>
-            <select v-model="insumoForm.insumo_unidad" class="h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm bg-white outline-none focus:border-[#0f5238]">
+            <select v-model="insumoForm.insumo_unidad" class="h-10 px-3 border border-outline-variant rounded-lg text-sm bg-surface-container-lowest outline-none focus:border-primary">
               <option value="kg">kg</option><option value="libra">libra</option><option value="litro">litro</option><option value="unidad">unidad</option>
             </select>
           </div>
 
           <div class="grid grid-cols-3 gap-3">
-            <div><label class="text-xs text-[#404943]">Cantidad</label>
-              <input v-model="insumoForm.cantidad" type="number" step="0.01" placeholder="0.00" class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" /></div>
-            <div><label class="text-xs text-[#404943]">Costo unitario (C$)</label>
-              <input v-model="insumoForm.costo_unitario" type="number" step="0.01" placeholder="0.00" class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" /></div>
-            <div><label class="text-xs text-[#404943]">Fecha</label>
+            <div><label class="text-xs text-on-surface-variant">Cantidad</label>
+              <input v-model="insumoForm.cantidad" type="number" step="0.01" placeholder="0.00" class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" /></div>
+            <div><label class="text-xs text-on-surface-variant">Costo unitario (C$)</label>
+              <input v-model="insumoForm.costo_unitario" type="number" step="0.01" placeholder="0.00" class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" /></div>
+            <div><label class="text-xs text-on-surface-variant">Fecha</label>
               <div class="relative">
-                <input ref="fpInsumo" type="text" placeholder="Seleccionar fecha..." readonly class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238] bg-white cursor-pointer flatpickr-input" />
-                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[#707973] text-[18px] pointer-events-none">calendar_today</span>
+                <input ref="fpInsumo" type="text" placeholder="Seleccionar fecha..." readonly class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary bg-surface-container-lowest cursor-pointer flatpickr-input" />
+                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">calendar_today</span>
               </div></div>
           </div>
-          <textarea v-model="insumoForm.notas" rows="2" placeholder="Notas (opcional)" class="w-full px-3 py-2 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238] resize-none"></textarea>
-          <button @click="submitInsumo" class="bg-[#0f5238] text-white px-6 py-2 rounded-lg text-sm hover:brightness-110 transition-all">Guardar Insumo</button>
+          <textarea v-model="insumoForm.notas" rows="2" placeholder="Notas (opcional)" class="w-full px-3 py-2 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary resize-none"></textarea>
+          <button @click="submitInsumo" class="bg-primary text-white px-6 py-2 rounded-lg text-sm hover:brightness-110 transition-all">Guardar Insumo</button>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 overflow-hidden">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
           <table class="w-full text-left text-sm">
-            <thead class="bg-[#f6f4ec]"><tr>
-              <th class="p-3 text-xs text-[#404943]">Insumo</th><th class="p-3 text-xs text-[#404943]">Tipo</th>
-              <th class="p-3 text-xs text-[#404943] text-right">Cantidad</th><th class="p-3 text-xs text-[#404943] text-right">Costo Unit.</th>
-              <th class="p-3 text-xs text-[#404943] text-right">Total</th><th class="p-3 text-xs text-[#404943]">Fecha</th>
+            <thead class="bg-surface-container-low"><tr>
+              <th class="p-3 text-xs text-on-surface-variant">Insumo</th><th class="p-3 text-xs text-on-surface-variant">Tipo</th>
+              <th class="p-3 text-xs text-on-surface-variant text-right">Cantidad</th><th class="p-3 text-xs text-on-surface-variant text-right">Costo Unit.</th>
+              <th class="p-3 text-xs text-on-surface-variant text-right">Total</th><th class="p-3 text-xs text-on-surface-variant">Fecha</th>
             </tr></thead>
             <tbody class="divide-y divide-[#eae8e0]">
-              <tr v-for="i in ciclo.insumos" :key="i.id" class="hover:bg-[#f6f4ec]">
-                <td class="p-3 font-medium">{{ i.insumo_nombre }}</td><td class="p-3 text-[#404943]">{{ i.insumo_tipo }}</td>
+              <tr v-for="i in ciclo.insumos" :key="i.id" class="hover:bg-surface-container-low">
+                <td class="p-3 font-medium">{{ i.insumo_nombre }}</td><td class="p-3 text-on-surface-variant">{{ i.insumo_tipo }}</td>
                 <td class="p-3 text-right">{{ i.cantidad }} {{ i.insumo_unidad }}</td><td class="p-3 text-right">{{ formatCurrency(i.costo_unitario) }}</td>
-                <td class="p-3 text-right font-medium">{{ formatCurrency(i.costo_total) }}</td><td class="p-3 text-[#404943]">{{ i.fecha ? formatDate(i.fecha) : '—' }}</td>
+                <td class="p-3 text-right font-medium">{{ formatCurrency(i.costo_total) }}</td><td class="p-3 text-on-surface-variant">{{ i.fecha ? formatDate(i.fecha) : '—' }}</td>
               </tr>
-              <tr v-if="!ciclo.insumos.length"><td colspan="6" class="p-6 text-center text-[#404943]">Sin insumos registrados.</td></tr>
+              <tr v-if="!ciclo.insumos.length"><td colspan="6" class="p-6 text-center text-on-surface-variant">Sin insumos registrados.</td></tr>
             </tbody>
           </table>
         </div>
@@ -256,42 +256,42 @@ onUnmounted(() => { fpInstanceInsumo?.destroy(); fpInstanceMo?.destroy(); fpInst
       <!-- TAB: Mano de Obra -->
       <div v-if="tab === 'mano_obra'" class="space-y-4">
         <div class="flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-[#1b1c17]">{{ ciclo.mano_obra.length }} registros</h3>
-          <button @click="showMoForm = !showMoForm" class="bg-[#0f5238] text-white px-4 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:brightness-110 transition-all">
+          <h3 class="text-lg font-semibold text-on-surface">{{ ciclo.mano_obra.length }} registros</h3>
+          <button @click="showMoForm = !showMoForm" class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:brightness-110 transition-all">
             <span class="material-symbols-outlined text-[18px]">add</span> Agregar
           </button>
         </div>
-        <div v-show="showMoForm" class="bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 p-5 space-y-3">
-          <input v-model="moForm.concepto" type="text" placeholder="Concepto (ej: Siembra, Limpia, Cosecha)" class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" />
+        <div v-show="showMoForm" class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-5 space-y-3">
+          <input v-model="moForm.concepto" type="text" placeholder="Concepto (ej: Siembra, Limpia, Cosecha)" class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" />
           <div class="grid grid-cols-4 gap-3">
-            <div><label class="text-xs text-[#404943]">Personas</label><input v-model.number="moForm.personas" type="number" min="1" class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" /></div>
-            <div><label class="text-xs text-[#404943]">Horas</label><input v-model="moForm.horas" type="number" step="0.5" placeholder="0" class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" /></div>
-            <div><label class="text-xs text-[#404943]">Costo x hora (C$)</label><input v-model="moForm.costo_hora" type="number" step="0.01" placeholder="0.00" class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" /></div>
-            <div><label class="text-xs text-[#404943]">Fecha</label>
+            <div><label class="text-xs text-on-surface-variant">Personas</label><input v-model.number="moForm.personas" type="number" min="1" class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" /></div>
+            <div><label class="text-xs text-on-surface-variant">Horas</label><input v-model="moForm.horas" type="number" step="0.5" placeholder="0" class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" /></div>
+            <div><label class="text-xs text-on-surface-variant">Costo x hora (C$)</label><input v-model="moForm.costo_hora" type="number" step="0.01" placeholder="0.00" class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" /></div>
+            <div><label class="text-xs text-on-surface-variant">Fecha</label>
               <div class="relative">
-                <input ref="fpMo" type="text" placeholder="Seleccionar fecha..." readonly class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238] bg-white cursor-pointer flatpickr-input" />
-                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[#707973] text-[18px] pointer-events-none">calendar_today</span>
+                <input ref="fpMo" type="text" placeholder="Seleccionar fecha..." readonly class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary bg-surface-container-lowest cursor-pointer flatpickr-input" />
+                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">calendar_today</span>
               </div></div>
           </div>
           <div class="flex gap-3">
-            <textarea v-model="moForm.notas" rows="2" placeholder="Notas" class="flex-1 px-3 py-2 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238] resize-none"></textarea>
-            <button @click="submitMo" class="bg-[#0f5238] text-white px-6 rounded-lg text-sm hover:brightness-110 transition-all self-start">Guardar</button>
+            <textarea v-model="moForm.notas" rows="2" placeholder="Notas" class="flex-1 px-3 py-2 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary resize-none"></textarea>
+            <button @click="submitMo" class="bg-primary text-white px-6 rounded-lg text-sm hover:brightness-110 transition-all self-start">Guardar</button>
           </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 overflow-hidden">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
           <table class="w-full text-left text-sm">
-            <thead class="bg-[#f6f4ec]"><tr>
-              <th class="p-3 text-xs text-[#404943]">Concepto</th><th class="p-3 text-xs text-[#404943] text-right">Personas</th>
-              <th class="p-3 text-xs text-[#404943] text-right">Horas</th><th class="p-3 text-xs text-[#404943] text-right">Costo/h</th>
-              <th class="p-3 text-xs text-[#404943] text-right">Total</th><th class="p-3 text-xs text-[#404943]">Fecha</th>
+            <thead class="bg-surface-container-low"><tr>
+              <th class="p-3 text-xs text-on-surface-variant">Concepto</th><th class="p-3 text-xs text-on-surface-variant text-right">Personas</th>
+              <th class="p-3 text-xs text-on-surface-variant text-right">Horas</th><th class="p-3 text-xs text-on-surface-variant text-right">Costo/h</th>
+              <th class="p-3 text-xs text-on-surface-variant text-right">Total</th><th class="p-3 text-xs text-on-surface-variant">Fecha</th>
             </tr></thead>
             <tbody class="divide-y divide-[#eae8e0]">
-              <tr v-for="m in ciclo.mano_obra" :key="m.id" class="hover:bg-[#f6f4ec]">
+              <tr v-for="m in ciclo.mano_obra" :key="m.id" class="hover:bg-surface-container-low">
                 <td class="p-3 font-medium">{{ m.concepto }}</td><td class="p-3 text-right">{{ m.personas }}</td>
                 <td class="p-3 text-right">{{ m.horas }}</td><td class="p-3 text-right">{{ formatCurrency(m.costo_hora) }}</td>
-                <td class="p-3 text-right font-medium">{{ formatCurrency(m.costo_total) }}</td><td class="p-3 text-[#404943]">{{ m.fecha ? formatDate(m.fecha) : '—' }}</td>
+                <td class="p-3 text-right font-medium">{{ formatCurrency(m.costo_total) }}</td><td class="p-3 text-on-surface-variant">{{ m.fecha ? formatDate(m.fecha) : '—' }}</td>
               </tr>
-              <tr v-if="!ciclo.mano_obra.length"><td colspan="6" class="p-6 text-center text-[#404943]">Sin mano de obra registrada.</td></tr>
+              <tr v-if="!ciclo.mano_obra.length"><td colspan="6" class="p-6 text-center text-on-surface-variant">Sin mano de obra registrada.</td></tr>
             </tbody>
           </table>
         </div>
@@ -300,37 +300,37 @@ onUnmounted(() => { fpInstanceInsumo?.destroy(); fpInstanceMo?.destroy(); fpInst
       <!-- TAB: Otros Costos -->
       <div v-if="tab === 'otros_costos'" class="space-y-4">
         <div class="flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-[#1b1c17]">{{ ciclo.otros_costos.length }} registros</h3>
-          <button @click="showOcForm = !showOcForm" class="bg-[#0f5238] text-white px-4 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:brightness-110 transition-all">
+          <h3 class="text-lg font-semibold text-on-surface">{{ ciclo.otros_costos.length }} registros</h3>
+          <button @click="showOcForm = !showOcForm" class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:brightness-110 transition-all">
             <span class="material-symbols-outlined text-[18px]">add</span> Agregar
           </button>
         </div>
-        <div v-show="showOcForm" class="bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 p-5 space-y-3">
-          <input v-model="ocForm.concepto" type="text" placeholder="Concepto (ej: Alquiler tractor, Análisis de suelo)" class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" />
+        <div v-show="showOcForm" class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-5 space-y-3">
+          <input v-model="ocForm.concepto" type="text" placeholder="Concepto (ej: Alquiler tractor, Análisis de suelo)" class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" />
           <div class="grid grid-cols-2 gap-3">
-            <div><label class="text-xs text-[#404943]">Monto (C$)</label><input v-model="ocForm.monto" type="number" step="0.01" placeholder="0.00" class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238]" /></div>
-            <div><label class="text-xs text-[#404943]">Fecha</label>
+            <div><label class="text-xs text-on-surface-variant">Monto (C$)</label><input v-model="ocForm.monto" type="number" step="0.01" placeholder="0.00" class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary" /></div>
+            <div><label class="text-xs text-on-surface-variant">Fecha</label>
               <div class="relative">
-                <input ref="fpOc" type="text" placeholder="Seleccionar fecha..." readonly class="w-full h-10 px-3 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238] bg-white cursor-pointer flatpickr-input" />
-                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[#707973] text-[18px] pointer-events-none">calendar_today</span>
+                <input ref="fpOc" type="text" placeholder="Seleccionar fecha..." readonly class="w-full h-10 px-3 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary bg-surface-container-lowest cursor-pointer flatpickr-input" />
+                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">calendar_today</span>
               </div></div>
           </div>
           <div class="flex gap-3">
-            <textarea v-model="ocForm.notas" rows="2" placeholder="Notas" class="flex-1 px-3 py-2 border border-[#bfc9c1] rounded-lg text-sm outline-none focus:border-[#0f5238] resize-none"></textarea>
-            <button @click="submitOc" class="bg-[#0f5238] text-white px-6 rounded-lg text-sm hover:brightness-110 transition-all self-start">Guardar</button></div>
+            <textarea v-model="ocForm.notas" rows="2" placeholder="Notas" class="flex-1 px-3 py-2 border border-outline-variant rounded-lg text-sm outline-none focus:border-primary resize-none"></textarea>
+            <button @click="submitOc" class="bg-primary text-white px-6 rounded-lg text-sm hover:brightness-110 transition-all self-start">Guardar</button></div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 overflow-hidden">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
           <table class="w-full text-left text-sm">
-            <thead class="bg-[#f6f4ec]"><tr>
-              <th class="p-3 text-xs text-[#404943]">Concepto</th><th class="p-3 text-xs text-[#404943] text-right">Monto</th>
-              <th class="p-3 text-xs text-[#404943]">Fecha</th><th class="p-3 text-xs text-[#404943]">Notas</th>
+            <thead class="bg-surface-container-low"><tr>
+              <th class="p-3 text-xs text-on-surface-variant">Concepto</th><th class="p-3 text-xs text-on-surface-variant text-right">Monto</th>
+              <th class="p-3 text-xs text-on-surface-variant">Fecha</th><th class="p-3 text-xs text-on-surface-variant">Notas</th>
             </tr></thead>
             <tbody class="divide-y divide-[#eae8e0]">
-              <tr v-for="o in ciclo.otros_costos" :key="o.id" class="hover:bg-[#f6f4ec]">
+              <tr v-for="o in ciclo.otros_costos" :key="o.id" class="hover:bg-surface-container-low">
                 <td class="p-3 font-medium">{{ o.concepto }}</td><td class="p-3 text-right font-medium">{{ formatCurrency(o.monto) }}</td>
-                <td class="p-3 text-[#404943]">{{ o.fecha ? formatDate(o.fecha) : '—' }}</td><td class="p-3 text-[#404943]">{{ o.notas || '—' }}</td>
+                <td class="p-3 text-on-surface-variant">{{ o.fecha ? formatDate(o.fecha) : '—' }}</td><td class="p-3 text-on-surface-variant">{{ o.notas || '—' }}</td>
               </tr>
-              <tr v-if="!ciclo.otros_costos.length"><td colspan="4" class="p-6 text-center text-[#404943]">Sin otros costos registrados.</td></tr>
+              <tr v-if="!ciclo.otros_costos.length"><td colspan="4" class="p-6 text-center text-on-surface-variant">Sin otros costos registrados.</td></tr>
             </tbody>
           </table>
         </div>

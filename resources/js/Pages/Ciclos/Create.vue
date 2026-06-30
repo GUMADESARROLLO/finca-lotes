@@ -69,7 +69,7 @@ onMounted(() => {
       dateFormat: 'Y-m-d',
       altFormat: 'j \\de F \\de Y',
       altInput: true,
-      altInputClass: 'w-full h-11 px-3 border border-[#bfc9c1] rounded-lg text-sm focus:border-[#0f5238] focus:ring-2 focus:ring-[#b1f0ce] outline-none transition-all bg-white cursor-pointer',
+      altInputClass: 'w-full h-11 px-3 border border-outline-variant rounded-lg text-sm focus:border-primary focus:ring-2 focus:ring-primary-fixed outline-none transition-all bg-surface-container-lowest cursor-pointer',
       onChange: (selectedDates) => {
         form.fecha_siembra = selectedDates[0] ? flatpickr.formatDate(selectedDates[0], 'Y-m-d') : ''
       },
@@ -83,19 +83,19 @@ onMounted(() => {
     <Head title="Nuevo Ciclo" />
     <div class="max-w-2xl">
       <div class="flex items-center gap-4 mb-6">
-        <Link :href="route('ciclos.index')" class="material-symbols-outlined text-[#404943] hover:text-[#0f5238] transition-colors p-1">arrow_back</Link>
+        <Link :href="route('ciclos.index')" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors p-1">arrow_back</Link>
         <div>
-          <h2 class="text-2xl text-[#0f5238] font-bold">Nuevo Ciclo de Siembra</h2>
-          <p class="text-sm text-[#404943]">Registre un nuevo ciclo en el lote seleccionado.</p>
+          <h2 class="text-2xl text-primary font-bold">Nuevo Ciclo de Siembra</h2>
+          <p class="text-sm text-on-surface-variant">Registre un nuevo ciclo en el lote seleccionado.</p>
         </div>
       </div>
 
       <form @submit.prevent="submit" class="space-y-6">
-        <div class="bg-white rounded-xl shadow-sm border border-[#bfc9c1]/30 p-6 space-y-5">
-          <h3 class="text-lg font-semibold text-[#1b1c17] border-b border-[#eae8e0] pb-3">Información del Ciclo</h3>
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-6 space-y-5">
+          <h3 class="text-lg font-semibold text-on-surface border-b border-surface-container-high pb-3">Información del Ciclo</h3>
 
           <div class="space-y-1.5">
-            <label class="text-sm font-medium text-[#1b1c17]">Lote <span class="text-[#ba1a1a]">*</span></label>
+            <label class="text-sm font-medium text-on-surface">Lote <span class="text-error">*</span></label>
             <SearchableSelect
               :options="lotes"
               :displayFn="displayLote"
@@ -106,7 +106,7 @@ onMounted(() => {
           </div>
 
           <div class="space-y-1.5">
-            <label class="text-sm font-medium text-[#1b1c17]">Cultivo <span class="text-[#ba1a1a]">*</span></label>
+            <label class="text-sm font-medium text-on-surface">Cultivo <span class="text-error">*</span></label>
             <SearchableSelect
               :options="cultivos"
               :displayFn="displayCultivo"
@@ -114,34 +114,34 @@ onMounted(() => {
               :model-value="form.cultivo_id"
               @update:model-value="form.cultivo_id = $event"
             />
-            <p v-if="cultivoSeleccionado" class="text-xs text-[#707973]">Ciclo: {{ cultivoSeleccionado.ciclo_dias }} días desde siembra a cosecha.</p>
+            <p v-if="cultivoSeleccionado" class="text-xs text-outline">Ciclo: {{ cultivoSeleccionado.ciclo_dias }} días desde siembra a cosecha.</p>
           </div>
 
           <div class="space-y-1.5">
-            <label class="text-sm font-medium text-[#1b1c17]">Fecha de Siembra <span class="text-[#ba1a1a]">*</span></label>
+            <label class="text-sm font-medium text-on-surface">Fecha de Siembra <span class="text-error">*</span></label>
             <div class="relative">
               <input ref="dateInput" type="text" placeholder="Seleccionar fecha..." readonly />
-              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#707973] pointer-events-none">calendar_today</span>
+              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">calendar_today</span>
             </div>
-            <p v-if="fechaCosechaEstimada" class="text-xs text-[#0f5238] font-medium">
+            <p v-if="fechaCosechaEstimada" class="text-xs text-primary font-medium">
               Cosecha estimada: {{ fechaCosechaEstimada }}
             </p>
           </div>
 
           <div class="space-y-1.5">
-            <label class="text-sm font-medium text-[#1b1c17]">Notas</label>
+            <label class="text-sm font-medium text-on-surface">Notas</label>
             <textarea v-model="form.notas" rows="3" placeholder="Observaciones sobre el ciclo..."
-              class="w-full px-3 py-2 border border-[#bfc9c1] rounded-lg text-sm focus:border-[#0f5238] focus:ring-2 focus:ring-[#b1f0ce] outline-none transition-all resize-none"></textarea>
+              class="w-full px-3 py-2 border border-outline-variant rounded-lg text-sm focus:border-primary focus:ring-2 focus:ring-primary-fixed outline-none transition-all resize-none"></textarea>
           </div>
         </div>
 
         <div class="flex items-center gap-4 pb-8">
           <button type="submit" :disabled="form.processing"
-            class="h-12 px-8 bg-[#0f5238] text-white font-semibold rounded-lg shadow-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50">
+            class="h-12 px-8 bg-primary text-white font-semibold rounded-lg shadow-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50">
             <span class="material-symbols-outlined">add_circle</span>
             {{ form.processing ? 'Creando...' : 'Crear Ciclo' }}
           </button>
-          <Link :href="route('ciclos.index')" class="h-12 px-6 border border-[#bfc9c1] text-[#404943] rounded-lg hover:bg-[#f6f4ec] transition-all flex items-center">Cancelar</Link>
+          <Link :href="route('ciclos.index')" class="h-12 px-6 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container-low transition-all flex items-center">Cancelar</Link>
         </div>
       </form>
     </div>
